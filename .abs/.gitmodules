@@ -1,0 +1,6 @@
+[submodule "branca-feedstock" ]
+    path = include/foo
+    branch = master
+	url = ../branca-feedstock
+
+
