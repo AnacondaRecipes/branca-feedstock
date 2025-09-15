@@ -27,6 +27,12 @@ requirements:
     - python
     - jinja2 >=3
 
+# problem with path: FileNotFoundError: [Errno 2] No such file or directory: '$SRC_DIR/gh/tests/../branca/_schemes.json'
+{% set ignore_tests = " --ignore=gh/tests/test_utilities.py" %}
+# selenium.common.exceptions.NoSuchDriverException: Message: Unable to obtain driver for firefox
+{% set tests_to_deselect = "--deselect=gh/tests/test_iframe.py::test_rendering_utf8_iframe" %}
+{% set tests_to_deselect = tests_to_deselect + " --deselect=gh/tests/test_iframe.py::test_rendering_figure_notebook" %}
+
 test:
   source_files:
     - gh/tests
@@ -42,8 +48,7 @@ test:
   commands:
     - pip check
     - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
-    # test_utilities -> problem with path: FileNotFoundError: [Errno 2] No such file or directory: '$SRC_DIR/gh/tests/../branca/_schemes.json'
-    - pytest -v gh/tests --ignore="gh/tests/test_utilities.py"
+    - pytest -v gh/tests {{ tests_to_deselect }} {{ ignore_tests }}
 
 about:
   home: https://github.com/python-visualization/branca
