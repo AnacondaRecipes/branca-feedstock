@@ -1,37 +1,54 @@
 {% set name = "branca" %}
-{% set version = "0.6.0" %}
+{% set version = "0.8.1" %}
 
 package:
   name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/branca-{{ version }}.tar.gz
-  sha256: 55949855214504c7583b71b9a03a84dce2e96a84027613bb53b42d04844ce24e
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+    sha256: ac397c2d79bd13af0d04193b26d5ed17031d27609a7f1fab50c438b8ae712390
+  - url: https://github.com/python-visualization/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+    sha256: b6ec0bc22418198f8ef1ad1b1bc459472120aa1199acf077cab763cf9265436e
+    folder: gh
 
 build:
   number: 0
-  skip: True  # [py<37]
-  script: {{ PYTHON }} -m pip install . -vv --no-deps
+  skip: true  # [py<37]
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   host:
     - python
     - pip
-    - setuptools
+    - setuptools >=41.2
     - setuptools_scm
-    - wheel
   run:
     - python
-    - jinja2
+    - jinja2 >=3
+
+# problem with path: FileNotFoundError: [Errno 2] No such file or directory: '$SRC_DIR/gh/tests/../branca/_schemes.json'
+{% set ignore_tests = " --ignore=gh/tests/test_utilities.py" %}
+# selenium.common.exceptions.NoSuchDriverException: Message: Unable to obtain driver for firefox
+{% set tests_to_deselect = "--deselect=gh/tests/test_iframe.py::test_rendering_utf8_iframe" %}
+{% set tests_to_deselect = tests_to_deselect + " --deselect=gh/tests/test_iframe.py::test_rendering_figure_notebook" %}
 
 test:
+  source_files:
+    - gh/tests
   imports:
     - branca
+    - branca.colormap
+    - branca.element
+    - branca.utilities
   requires:
     - pip
+    - pytest
+    - selenium
   commands:
     - pip check
+    - python -c "from importlib.metadata import version; assert(version('{{ name }}')=='{{ version }}')"
+    - pytest -v gh/tests {{ tests_to_deselect }} {{ ignore_tests }}
 
 about:
   home: https://github.com/python-visualization/branca
@@ -42,7 +59,7 @@ about:
   description: |
     This library is a spinoff from folium with the non-map-specific features.
     It can be used to generate HTML + JS. It is based on Jinja2.
-  doc_url: https://python-visualization.github.io/branca/
+  doc_url: https://python-visualization.github.io/branca
   dev_url: https://github.com/python-visualization/branca
 
 extra:
