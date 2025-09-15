@@ -6,7 +6,7 @@ package:
   version: {{ version }}
 
 source:
-  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/branca-{{ version }}.tar.gz
+  - url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
     sha256: ac397c2d79bd13af0d04193b26d5ed17031d27609a7f1fab50c438b8ae712390
   - url: https://github.com/python-visualization/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
     sha256: b6ec0bc22418198f8ef1ad1b1bc459472120aa1199acf077cab763cf9265436e
