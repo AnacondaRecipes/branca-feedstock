@@ -1,5 +1,8 @@
 {% set name = "branca" %}
 {% set version = "0.8.1" %}
+{% set ignore_tests = " --ignore=gh/tests/test_utilities.py" %}
+{% set tests_to_deselect = "--deselect=gh/tests/test_iframe.py::test_rendering_utf8_iframe" %}
+{% set tests_to_deselect = 'tests_to_deselect + " --deselect=gh/tests/test_iframe.py::test_rendering_figure_notebook"' %}
 
 package:
   name: {{ name|lower }}
@@ -13,7 +16,7 @@ source:
     folder: gh
 
 build:
-  number: 0
+  number: 1
   skip: true  # [py<37]
   script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
@@ -28,11 +31,7 @@ requirements:
     - jinja2 >=3
 
 # problem with path: FileNotFoundError: [Errno 2] No such file or directory: '$SRC_DIR/gh/tests/../branca/_schemes.json'
-{% set ignore_tests = " --ignore=gh/tests/test_utilities.py" %}
 # selenium.common.exceptions.NoSuchDriverException: Message: Unable to obtain driver for firefox
-{% set tests_to_deselect = "--deselect=gh/tests/test_iframe.py::test_rendering_utf8_iframe" %}
-{% set tests_to_deselect = tests_to_deselect + " --deselect=gh/tests/test_iframe.py::test_rendering_figure_notebook" %}
-
 test:
   source_files:
     - gh/tests
